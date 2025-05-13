@@ -73,8 +73,8 @@ body{
   .lineA{fill:none;stroke:steelblue;stroke-width:1.4}
   .lineB{fill:none;stroke:tomato;stroke-width:1.4}
   
-  .dark-rect{fill:#d0d4ff;opacity:.25}
-  .light-rect{fill:#ffffcc;opacity:.5}
+  .dark-rect{fill:#6a8cc2;opacity:.25}
+  .light-rect{fill:#eaea9d;opacity:.5}
   
   .ovuline{stroke:#000;stroke-width:1;stroke-dasharray:4 4}
   
