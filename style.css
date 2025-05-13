@@ -1,0 +1,94 @@
+body{
+    margin:0;
+    font-family:system-ui,sans-serif;
+    background:#fafafa;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh
+  }
+  
+  header,footer{
+    background:#222;
+    color:#fff;
+    padding:.6rem 1rem
+  }
+  
+  h1{margin:0;font-size:1.3rem}
+  
+  #controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    justify-content:center;
+    padding:.8rem 0 0;
+    margin:.6rem 0
+  }
+  
+  #controls label{
+    white-space:nowrap;
+    font-size:.9rem;
+    display:flex;
+    align-items:center;
+    gap:.35rem
+  }
+  
+  #controls select,#controls button{
+    padding:4px 10px;
+    font-size:.9rem;
+    border:1px solid #888;
+    border-radius:4px;
+    background:#fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.1);
+    cursor:pointer;
+    transition:border-color .2s,box-shadow .2s
+  }
+  
+  #controls select:hover,#controls button:hover{
+    border-color:#2684ff;
+    box-shadow:0 0 4px rgba(38,132,255,.4)
+  }
+  
+  #controls button{
+    background:#2684ff;
+    color:#fff;
+    margin-left:1rem
+  }
+  
+  #controls button:hover{background:#1c6cd9}
+  
+  #chart{
+    flex:1 1 auto;
+    max-width:1200px;
+    max-height:650px;
+    width:100%;
+    height:100%;
+    margin:0 auto;
+    position:relative
+  }
+  
+  svg{width:100%;height:100%;max-width:1200px;max-height:650px}
+  
+  .axis path,.axis line{stroke:#666;shape-rendering:crispEdges}
+  
+  .lineA{fill:none;stroke:steelblue;stroke-width:1.4}
+  .lineB{fill:none;stroke:tomato;stroke-width:1.4}
+  
+  .dark-rect{fill:#d0d4ff;opacity:.25}
+  .light-rect{fill:#ffffcc;opacity:.5}
+  
+  .ovuline{stroke:#000;stroke-width:1;stroke-dasharray:4 4}
+  
+  .legendBox{width:10px;height:10px}
+  .legend text{font-size:.8rem}
+  
+  .tooltip{
+    position:absolute;
+    background:rgba(0,0,0,.8);
+    color:#fff;
+    font-size:.75rem;
+    padding:3px 6px;
+    border-radius:3px;
+    pointer-events:none;
+    opacity:0
+  }
+  
