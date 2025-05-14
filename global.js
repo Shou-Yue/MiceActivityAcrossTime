@@ -101,6 +101,26 @@ function init(data){
 
   drawBackground(data.meta);
 
+  g.select('.axis.x')
+    .attr('transform', `translate(0,${H})`)
+    .call(d3.axisBottom(x).tickFormat(minTo));
+  g.select('.axis.y').call(d3.axisLeft(y));
+
+  // **Right here** (after drawing both axes) append the labels:
+  g.append('text')
+    .attr('class','axis-label x-axis-label')
+    .attr('text-anchor','middle')
+    .attr('x', margin.left + W/2)
+    .attr('y', H + margin.top + margin.bottom - 10)
+    .text('Time');
+
+  g.append('text')
+    .attr('class','axis-label y-axis-label')
+    .attr('text-anchor','middle')
+    .attr('transform', `translate(${-margin.left - 10},${margin.top + H/2}) rotate(-90)`)
+    .text('Activity');
+
+
   const line=d3.line().x(d=>x(d.minute));
 
   const getSeries=code=>code==='male_avg'?data.derived.male_avg:
@@ -122,52 +142,125 @@ function init(data){
 
   svg.call(zoom);
 
-  function update(reset=false){
-    let d0=+startSel.node().value,d1=+endSel.node().value;
-    if(d0>d1){[d0,d1]=[d1,d0];startSel.property('value',d0);endSel.property('value',d1)}
-    x.domain([(d0-1)*data.meta.minPerDay,d1*data.meta.minPerDay]);
-    if(reset)svg.call(zoom.transform,d3.zoomIdentity);
-    const metric=metricSel.node().value,
-          serA=getSeries(trendA.node().value),
-          serB=getSeries(trendB.node().value);
-    if(metric==='temp'){
-      const lo=d3.min([d3.min(serA,d=>d.temp),d3.min(serB,d=>d.temp)]),
-            hi=d3.max([d3.max(serA,d=>d.temp),d3.max(serB,d=>d.temp)]);
-      y.domain([lo-.5,hi+.5]);
-    }else{
-      const hi=d3.max([d3.max(serA,d=>d.activity),d3.max(serB,d=>d.activity)]);
-      y.domain([0,hi*1.05]);
-    }
-    line.y(d=>y(d[metric]));
-    plot.select('.lineA').datum(serA).attr('d',line);
-    plot.select('.lineB').datum(serB).attr('d',line);
-    g.select('.axis.x')
-      .attr('transform',`translate(0,${H})`)
-      .call(d3.axisBottom(x).ticks(Math.max(4,(d1-d0+1)*2)).tickFormat(minTo));
-    g.select('.axis.y').call(
-      metric==='temp'?d3.axisLeft(y).ticks(6).tickFormat(d=>`${d} °C`):d3.axisLeft(y));
-    plot.selectAll('.back-lightdark rect')
-      .attr('x',d=>x(d[0])).attr('width',d=>x(d[1])-x(d[0]));
-    plot.selectAll('.ovulation-lines line')
-      .attr('x1',d=>x(d)).attr('x2',d=>x(d));
+//   function update(reset=false){
+//     let d0=+startSel.node().value,d1=+endSel.node().value;
+//     if(d0>d1){[d0,d1]=[d1,d0];startSel.property('value',d0);endSel.property('value',d1)}
+//     x.domain([(d0-1)*data.meta.minPerDay,d1*data.meta.minPerDay]);
+//     if(reset)svg.call(zoom.transform,d3.zoomIdentity);
+//     const metric=metricSel.node().value,
+//           serA=getSeries(trendA.node().value),
+//           serB=getSeries(trendB.node().value);
+//     if(metric==='temp'){
+//       const lo=d3.min([d3.min(serA,d=>d.temp),d3.min(serB,d=>d.temp)]),
+//             hi=d3.max([d3.max(serA,d=>d.temp),d3.max(serB,d=>d.temp)]);
+//       y.domain([lo-.5,hi+.5]);
+//     }else{
+//       const hi=d3.max([d3.max(serA,d=>d.activity),d3.max(serB,d=>d.activity)]);
+//       y.domain([0,hi*1.05]);
+//     }
+//     line.y(d=>y(d[metric]));
+//     plot.select('.lineA').datum(serA).attr('d',line);
+//     plot.select('.lineB').datum(serB).attr('d',line);
+//     g.select('.axis.x')
+//       .attr('transform',`translate(0,${H})`)
+//       .call(d3.axisBottom(x).ticks(Math.max(4,(d1-d0+1)*2)).tickFormat(minTo));
+//     g.select('.axis.y').call(
+//       metric==='temp'?d3.axisLeft(y).ticks(6).tickFormat(d=>`${d} °C`):d3.axisLeft(y));
+//     plot.selectAll('.back-lightdark rect')
+//       .attr('x',d=>x(d[0])).attr('width',d=>x(d[1])-x(d[0]));
+//     plot.selectAll('.ovulation-lines line')
+//       .attr('x1',d=>x(d)).attr('x2',d=>x(d));
+//   }
+
+//   trendA.on('change',()=>update());
+//   trendB.on('change',()=>update());
+//   metricSel.on('change',()=>update());
+//   startSel.on('change',()=>update(true));
+//   endSel.on('change',()=>update(true));
+
+//   d3.select('#resetBtn').on('click',()=>{
+//     metricSel.property('value','activity');
+//     trendA.property('value','male_avg');
+//     trendB.property('value','female_avg');
+//     startSel.property('value',1);
+//     endSel.property('value',7);
+//     update(true);
+//   });
+
+//   update();
+// }
+function update(reset = false) {
+  let d0 = +startSel.node().value,
+      d1 = +endSel.node().value;
+  if (d0 > d1) {
+    [d0, d1] = [d1, d0];
+    startSel.property('value', d0);
+    endSel.property('value', d1);
   }
 
-  trendA.on('change',()=>update());
-  trendB.on('change',()=>update());
-  metricSel.on('change',()=>update());
-  startSel.on('change',()=>update(true));
-  endSel.on('change',()=>update(true));
+  x.domain([(d0 - 1) * data.meta.minPerDay, d1 * data.meta.minPerDay]);
+  if (reset) svg.call(zoom.transform, d3.zoomIdentity);
 
-  d3.select('#resetBtn').on('click',()=>{
-    metricSel.property('value','activity');
-    trendA.property('value','male_avg');
-    trendB.property('value','female_avg');
-    startSel.property('value',1);
-    endSel.property('value',7);
-    update(true);
-  });
+  const metric = metricSel.node().value,
+        serA   = getSeries(trendA.node().value),
+        serB   = getSeries(trendB.node().value);
 
-  update();
+  if (metric === 'temp') {
+    const lo = d3.min([d3.min(serA, d => d.temp), d3.min(serB, d => d.temp)]),
+          hi = d3.max([d3.max(serA, d => d.temp), d3.max(serB, d => d.temp)]);
+    y.domain([lo - 0.5, hi + 0.5]);
+  } else {
+    const hi = d3.max([d3.max(serA, d => d.activity), d3.max(serB, d => d.activity)]);
+    y.domain([0, hi * 1.05]);
+  }
+
+  line.y(d => y(d[metric]));
+
+  plot.select('.lineA').datum(serA).attr('d', line);
+  plot.select('.lineB').datum(serB).attr('d', line);
+
+  g.select('.axis.x')
+    .attr('transform', `translate(0,${H})`)
+    .call(d3.axisBottom(x)
+      .ticks(Math.max(4, (d1 - d0 + 1) * 2))
+      .tickFormat(minTo)
+    );
+
+  g.select('.axis.y')
+    .call(
+      metric === 'temp'
+        ? d3.axisLeft(y).ticks(6).tickFormat(d => `${d} °C`)
+        : d3.axisLeft(y)
+    );
+  const ylabel = metric === 'temp' ? 'Temperature (°C)' : 'Activity';
+  g.select('.y-axis-label').text(ylabel);
+
+  // Update background & ovulation overlays
+  plot.selectAll('.back-lightdark rect')
+    .attr('x', d => x(d[0]))
+    .attr('width', d => x(d[1]) - x(d[0]));
+  plot.selectAll('.ovulation-lines line')
+    .attr('x1', d => x(d))
+    .attr('x2', d => x(d));
+}
+
+// Event listeners
+d3.select('#trendA').on('change', () => update());
+d3.select('#trendB').on('change', () => update());
+d3.select('#metricSelect').on('change', () => update());
+d3.select('#startDay').on('change', () => update(true));
+d3.select('#endDay').on('change', () => update(true));
+d3.select('#resetBtn').on('click', () => {
+  d3.select('#metricSelect').property('value', 'activity');
+  d3.select('#trendA').property('value', 'male_avg');
+  d3.select('#trendB').property('value', 'female_avg');
+  d3.select('#startDay').property('value', 1);
+  d3.select('#endDay').property('value', 7);
+  update(true);
+});
+
+// Initial draw
+update();
 }
 
 function drawBackground(meta){
