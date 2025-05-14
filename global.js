@@ -107,18 +107,22 @@ function init(data){
   g.select('.axis.y').call(d3.axisLeft(y));
 
   // **Right here** (after drawing both axes) append the labels:
+  // X-axis label at bottom center
   g.append('text')
-    .attr('class','axis-label x-axis-label')
-    .attr('text-anchor','middle')
-    .attr('x', margin.left + W/2)
-    .attr('y', H + margin.top + margin.bottom - 10)
-    .text('Time');
+  .attr('class','axis-label x-axis-label')
+  .attr('x',  W / 2+300)           // center of the plot area
+  .attr('y',  H + 40)          // 40px below the top of the plot area
+  .attr('text-anchor','middle')
+  .text('Time(Day, Hours)');
 
+  // Y-axis label rotated on left middle
   g.append('text')
-    .attr('class','axis-label y-axis-label')
-    .attr('text-anchor','middle')
-    .attr('transform', `translate(${-margin.left - 10},${margin.top + H/2}) rotate(-90)`)
-    .text('Activity');
+  .attr('class','axis-label y-axis-label')
+  .attr('x', -H / 2)           // halfway down *negative* because of rotation
+  .attr('y', -45)              // 40px left of the plot area
+  .attr('transform','rotate(-90)')
+  .attr('text-anchor','middle')
+  .text('Activity');
 
 
   const line=d3.line().x(d=>x(d.minute));
